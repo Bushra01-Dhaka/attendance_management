@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import uni_cover from "../../assets/uni_cover_photo.jpg"
 
 const First_banner = () => {
@@ -12,9 +13,9 @@ const First_banner = () => {
           <h1 className="mb-5 text-4xl text-center text-white uppercase font-bold">
             Corpus Christi College, Cambridge
           </h1>
-          <button className="btn btn-primary text-black font-semibold bg-orange-500 hover:bg-black hover:text-orange-500 border-0 w-[500px] rounded-[50px]">
+          <Link to="/login"><button className="btn btn-primary text-black font-semibold bg-orange-500 hover:bg-black hover:text-orange-500 border-0 w-[500px] rounded-[50px]">
             Login Now
-          </button>
+          </button></Link>
         </div>
       </div>
     </div>
