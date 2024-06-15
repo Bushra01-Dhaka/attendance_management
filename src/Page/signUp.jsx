@@ -1,10 +1,16 @@
 import { FaCircleUser } from "react-icons/fa6";
 import { RiGoogleFill } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import signUp_cover from "../assets/signup_cover.jpg"
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import auth from "../Firebase/firebase.config";
+import { useState } from "react";
 
 
 const SignUp = () => {
+    const navigate = useNavigate();
+    const [registerError, setRegisterError] = useState('');
+
 
     const handleSignUp = e => {
         e.preventDefault();
@@ -12,6 +18,24 @@ const SignUp = () => {
         const email = e.target.email.value;
         const password = e.target.password.value;
         console.log(name, email, password);
+
+        //to reset 
+        setRegisterError('');
+        
+        //create user 
+        createUserWithEmailAndPassword(auth,email,password)
+        .then(result => {
+            const user = result.user;
+            console.log(user);
+            navigate("/");
+
+        })
+        .catch(error => {
+            console.error(error);
+            setRegisterError(error.message);
+        })
+
+      
 
         
 
@@ -53,6 +77,11 @@ const SignUp = () => {
 <button className="btn btn-primary border-0 rounded-[50px] bg-orange-500 hover:bg-black text-black hover:text-orange-500">Sign up</button>
 </div>
 
+{/* error check */}
+{
+    registerError && <p className="text-center text-red-700 font-bold">{registerError}</p>
+}
+
 
 {/* for google */}
 <div className="form-control">
@@ -69,6 +98,9 @@ const SignUp = () => {
 
 
 </form>
+
+
+
           {/* form ends */}
         </div>
 
