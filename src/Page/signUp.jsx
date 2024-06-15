@@ -11,7 +11,6 @@ const SignUp = () => {
     const navigate = useNavigate();
     const [registerError, setRegisterError] = useState('');
 
-
     const handleSignUp = e => {
         e.preventDefault();
         const name = e.target.name.value;
@@ -21,6 +20,25 @@ const SignUp = () => {
 
         //to reset 
         setRegisterError('');
+
+        if(password.length < 6){
+            setRegisterError("Password should be 6 characters or longer");
+            return;
+        }
+        else if(!/[A-Z]/.test(password)){
+           setRegisterError("Your password should have at least one Uppercase letter.");
+           return;
+        }
+        else if(!/[0-9]/.test(password))
+            {
+                setRegisterError("Your password should have at least one number.");
+                return;
+            }
+        // else if(!/[?=.*]/.test(password)){
+        //     setRegisterError("You Password should have at least one special character.");
+        //     return;
+        // }
+
         
         //create user 
         createUserWithEmailAndPassword(auth,email,password)
