@@ -1,4 +1,4 @@
-import { FaCircleUser } from "react-icons/fa6";
+import { FaCircleUser, FaEye, FaEyeSlash } from "react-icons/fa6";
 import { RiGoogleFill } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 import signUp_cover from "../assets/signup_cover.jpg"
@@ -10,6 +10,7 @@ import { useState } from "react";
 const SignUp = () => {
     const navigate = useNavigate();
     const [registerError, setRegisterError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleSignUp = e => {
         e.preventDefault();
@@ -29,6 +30,10 @@ const SignUp = () => {
            setRegisterError("Your password should have at least one Uppercase letter.");
            return;
         }
+        else if(!/[a-z]/.test(password)){
+            setRegisterError("Your password should have at least one lowercase letter.");
+            return;
+        }
         else if(!/[0-9]/.test(password))
             {
                 setRegisterError("Your password should have at least one number.");
@@ -45,7 +50,7 @@ const SignUp = () => {
         .then(result => {
             const user = result.user;
             console.log(user);
-            navigate("/");
+            navigate("/login");
 
         })
         .catch(error => {
@@ -85,10 +90,21 @@ const SignUp = () => {
 <label className="label">
  <span className="label-text">Password</span>
 </label>
-<input type="password" name="password" placeholder="password" className="input input-bordered" required />
-<label className="label">
- <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
-</label>
+<div className="flex justify-center items-center">
+<input 
+type={showPassword? "text" : "password"} 
+name="password" 
+placeholder="password" 
+className="input input-bordered w-full" required />
+<p onClick={() => setShowPassword(!showPassword)}>
+    {
+        showPassword?     <FaEye  className="text-2xl font-bold text-orange-500 ml-[-50px]"></FaEye>
+        :     <FaEyeSlash  className="text-2xl font-bold text-orange-500 ml-[-50px]"></FaEyeSlash>
+
+    }
+</p>
+</div>
+{/* forget password */}
 </div>
 
 <div className="form-control mt-6">

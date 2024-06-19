@@ -1,8 +1,17 @@
-import { FaCircleUser } from "react-icons/fa6";
+import { sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
+import { FaCircleUser, FaEye, FaEyeSlash } from "react-icons/fa6";
 import { RiGoogleFill } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import auth from "../Firebase/firebase.config";
+import { useRef, useState } from "react";
 
 const Login = () => {
+
+    const navigate = useNavigate();
+    const emailRef = useRef();
+
+    const [signInError, setSignInError] = useState('');
+    const[showPassword, setShowPassword] = useState(false);
 
     const handleLogin = e =>{
         e.preventDefault();
@@ -10,6 +19,43 @@ const Login = () => {
         const password = e.target.password.value;
 
         console.log(email,password);
+        setSignInError('');
+
+        signInWithEmailAndPassword(auth, email, password)
+        .then(result => {
+            const user = result.user;
+            console.log(user);
+            navigate("/");
+        })
+        .catch(error => {
+            console.error(error);
+            setSignInError("Please provide correct email and password.");
+
+        })
+        
+    }
+
+    const handleForgetPassword = () => {
+        const email = emailRef.current.value;
+        if(!email)
+            {
+                console.log('Please provide a email', emailRef.current.value);
+                return;
+            }
+        else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email))
+            {
+                console.log("please write a valid email");
+                return;
+            }
+
+            //send validation email
+            sendPasswordResetEmail(auth,email)
+            .then(() => {
+                alert("Please Check Your Email!!!");
+            })
+            .catch(error => {
+                console.log(error);
+            })
         
     }
     return (
@@ -25,21 +71,44 @@ const Login = () => {
 <label className="label">
  <span className="label-text">Email</span>
 </label>
-<input type="email" name="email" placeholder="email" className="input input-bordered" required />
+<input 
+type="email" 
+name="email" 
+placeholder="email" 
+ref={emailRef}
+className="input input-bordered" required />
 </div>
 <div className="form-control">
 <label className="label">
  <span className="label-text">Password</span>
 </label>
-<input type="password" name="password" placeholder="password" className="input input-bordered" required />
+<div className="flex justify-center items-center">
+<input 
+type={showPassword? "text" : "password"} 
+name="password" 
+placeholder="password" 
+className="input input-bordered w-full" required />
+<p onClick={() => setShowPassword(!showPassword)}>
+    {
+        showPassword?     <FaEye  className="text-2xl font-bold text-orange-500 ml-[-50px]"></FaEye>
+        :     <FaEyeSlash  className="text-2xl font-bold text-orange-500 ml-[-50px]"></FaEyeSlash>
+
+    }
+</p>
+</div>
 <label className="label">
- <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
+ <a onClick={handleForgetPassword} href="#" className="label-text-alt link link-hover">Forgot password?</a>
 </label>
 </div>
 
 <div className="form-control mt-6">
 <button className="btn btn-primary border-0 rounded-[50px] bg-orange-500 hover:bg-black text-black hover:text-orange-500">Sign in</button>
 </div>
+
+{/* Check error */}
+{
+    signInError && <p className="text-red-700 font-bold text-center p-2">{signInError}</p>
+}
 
 
 {/* for google */}
